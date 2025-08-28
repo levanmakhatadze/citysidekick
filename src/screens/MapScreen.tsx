@@ -53,6 +53,15 @@ export default function MapScreen() {
       <MapboxGL.MapView style={StyleSheet.absoluteFill} styleURL={theme === 'urban' ? MapboxGL.StyleURL.Street : MapboxGL.StyleURL.Outdoors}>
         <MapboxGL.Camera zoomLevel={12} centerCoordinate={center} />
       </MapboxGL.MapView>
+<View style={{ position: 'absolute', top: 10, right: 16, flexDirection: 'row', gap: 8 }}>
+  <TouchableOpacity onPress={() => setTheme('tranquil')} style={{ backgroundColor: theme==='tranquil'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+    <Text style={{ color: theme==='tranquil'?'#00112b':'#cfe3ff' }}>Tranquil</Text>
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => setTheme('urban')} style={{ backgroundColor: theme==='urban'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+    <Text style={{ color: theme==='urban'?'#00112b':'#cfe3ff' }}>Urban</Text>
+  </TouchableOpacity>
+</View>
+
 
       <View style={styles.searchWrap}>
         <TextInput
@@ -73,15 +82,6 @@ export default function MapScreen() {
                 <Text numberOfLines={1} style={styles.suggestText}>{item.display_name}</Text>
               </TouchableOpacity>
             )}
-<View style={{ position: 'absolute', top: 10, right: 16, flexDirection: 'row', gap: 8 }}>
-  <TouchableOpacity onPress={() => setTheme('tranquil')} style={{ backgroundColor: theme==='tranquil'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
-    <Text style={{ color: theme==='tranquil'?'#00112b':'#cfe3ff' }}>Tranquil</Text>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => setTheme('urban')} style={{ backgroundColor: theme==='urban'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
-    <Text style={{ color: theme==='urban'?'#00112b':'#cfe3ff' }}>Urban</Text>
-  </TouchableOpacity>
-</View>
-
           />
         )}
       </View>
