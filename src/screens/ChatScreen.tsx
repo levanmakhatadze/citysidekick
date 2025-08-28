@@ -4,6 +4,7 @@ import * as Speech from 'expo-speech';
 import { askEchoGuide } from '../services/ai';
 import { loadPrefs } from '../store/prefs';
 import { useRoute } from '@react-navigation/native';
+import { ensureAnonUser, addHistory } from '../services/user';
 
 export default function ChatScreen() {
   const route = useRoute<any>();
@@ -16,6 +17,8 @@ export default function ChatScreen() {
   }, [route.params]);
   const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
 
+    const uid = await ensureAnonUser();
+
   const send = async () => {
     const text = input.trim();
     if (!text) return;
@@ -24,6 +27,7 @@ export default function ChatScreen() {
     const prefs = await loadPrefs();
     const reply = await askEchoGuide(text, { tone: prefs.tone });
     setHistory(h => [...h, { role: 'ai', content: reply }]);
+    try { await addHistory(uid, text, reply); } catch {}
     Speech.speak(reply, { pitch: 1, rate: 1 });
   };
 
