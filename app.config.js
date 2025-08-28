@@ -1,6 +1,25 @@
 /** @type {import('@expo/config').ExpoConfig} */
 module.exports = ({ config }) => {
   const appName = 'CitySidekick';
+  const useMapboxPlugin = process.env.EXPO_USE_MAPBOX_PLUGIN === '1';
+  const plugins = [];
+
+  if (useMapboxPlugin) {
+    plugins.push([
+      '@rnmapbox/maps-expo-plugin',
+      {
+        android: {
+          accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
+          locationWhenInUsePermission: 'Allow CitySidekick to access your location.',
+        },
+        ios: {
+          accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
+          locationWhenInUsePermission: 'Allow CitySidekick to access your location.',
+        },
+      },
+    ]);
+  }
+
   return {
     ...config,
     name: appName,
@@ -13,22 +32,7 @@ module.exports = ({ config }) => {
     experiments: {
       typedRoutes: false,
     },
-    plugins: [
-      [
-        '@rnmapbox/maps-expo-plugin',
-        {
-          RNMapboxMapsVersion: '11.8.0',
-          android: {
-            accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
-            locationWhenInUsePermission: 'Allow CitySidekick to access your location.',
-          },
-          ios: {
-            accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
-            locationWhenInUsePermission: 'Allow CitySidekick to access your location.',
-          },
-        },
-      ],
-    ],
+    plugins,
     ios: {
       supportsTablet: true,
       infoPlist: {
