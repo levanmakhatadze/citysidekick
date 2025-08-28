@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import * as Speech from 'expo-speech';
 import { askEchoGuide } from '../services/ai';
 import { loadPrefs } from '../store/prefs';
+import { useRoute } from '@react-navigation/native';
 
 export default function ChatScreen() {
+  const route = useRoute<any>();
   const [input, setInput] = useState('');
+  useEffect(() => {
+    if (route.params?.preset) {
+      const p = String(route.params.preset);
+      setInput(p);
+    }
+  }, [route.params]);
   const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
 
   const send = async () => {
