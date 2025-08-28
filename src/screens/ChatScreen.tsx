@@ -17,14 +17,13 @@ export default function ChatScreen() {
   }, [route.params]);
   const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
 
-    const uid = await ensureAnonUser();
-
   const send = async () => {
     const text = input.trim();
     if (!text) return;
     setInput('');
     setHistory(h => [...h, { role: 'user', content: text }]);
     const prefs = await loadPrefs();
+    const uid = await ensureAnonUser();
     const reply = await askEchoGuide(text, { tone: prefs.tone });
     setHistory(h => [...h, { role: 'ai', content: reply }]);
     try { await addHistory(uid, text, reply); } catch {}
