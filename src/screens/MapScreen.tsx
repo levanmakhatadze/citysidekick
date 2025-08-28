@@ -134,14 +134,6 @@ export default function MapScreen() {
       <View style={{ position: 'absolute', top: 10, left: 16, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, backgroundColor: 'rgba(12,16,32,0.8)', borderWidth: 1, borderColor: 'rgba(90,161,255,0.25)' }}>
         <Text style={{ color: '#cfe3ff' }}>{center[1].toFixed(3)}, {center[0].toFixed(3)}</Text>
       </View>
-<View style={{ position: 'absolute', top: 10, right: 16, flexDirection: 'row', gap: 8 }}>
-  <TouchableOpacity onPress={() => setTheme('tranquil')} style={{ backgroundColor: theme==='tranquil'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
-    <Text style={{ color: theme==='tranquil'?'#00112b':'#cfe3ff' }}>Tranquil</Text>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => setTheme('urban')} style={{ backgroundColor: theme==='urban'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
-    <Text style={{ color: theme==='urban'?'#00112b':'#cfe3ff' }}>Urban</Text>
-  </TouchableOpacity>
-</View>
 
 
       <View style={styles.searchWrap}>
