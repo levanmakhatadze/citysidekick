@@ -98,7 +98,7 @@ export default function MapScreen() {
           )}
         </View>
 
-        <AdviceSheet />
+        <AdviceSheet center={center} />
       </View>
     );
   }
@@ -159,7 +159,7 @@ export default function MapScreen() {
         )}
       </View>
 
-      <AdviceSheet />
+      <AdviceSheet center={center} />
     </View>
   );
 }
