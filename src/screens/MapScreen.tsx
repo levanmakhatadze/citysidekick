@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TextInput, FlatList, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TextInput, FlatList, TouchableOpacity, Text, Platform } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import * as Location from 'expo-location';
 import AdviceSheet from '../components/AdviceSheet';
@@ -65,6 +65,43 @@ export default function MapScreen() {
     setSuggestions([]);
     setQ(s.display_name);
   };
+
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.container}>
+        <View style={{ alignItems: 'center', marginTop: 32 }}>
+          <Text style={{ color: '#cfe3ff', opacity: 0.9, marginBottom: 10 }}>
+            Map preview is not available on web. Please run on iOS/Android.
+          </Text>
+        </View>
+
+        <View style={styles.searchWrap}>
+          <TextInput
+            value={q}
+            onChangeText={setQ}
+            placeholder="Search city or place"
+            placeholderTextColor="#aab6d6"
+            style={styles.search}
+            accessibilityLabel="city-search"
+          />
+          {suggestions.length > 0 && (
+            <FlatList
+              data={suggestions}
+              keyExtractor={(item, idx) => `${item.lat}-${item.lon}-${idx}`}
+              style={styles.suggestList}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.suggestItem} onPress={() => pick(item)}>
+                  <Text numberOfLines={1} style={styles.suggestText}>{item.display_name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
+
+        <AdviceSheet />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
