@@ -8,7 +8,12 @@ export async function askEchoGuide(prompt: string, opts?: { tone?: Tone; system?
   const body = {
     model: 'gpt-4o-mini',
     messages: [
-      { role: 'system', content: opts?.system ?? 'You are EchoGuide, a calm, helpful companion.' },
+      {
+        role: 'system',
+        content:
+          opts?.system ??
+          'You are EchoGuide, a calm, helpful companion. Respond in under 120 words with three sections: Destination (name + short why + approx time/distance if possible), Outfit (practical yet stylish), Eco-Insight (low-carbon tip, walking/metro, sustainability). Keep tone aligned to the requested style.',
+      },
       { role: 'user', content: `[tone=${opts?.tone ?? 'neutral'}] ${prompt}` },
     ],
   };

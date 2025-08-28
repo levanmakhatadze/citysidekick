@@ -32,3 +32,20 @@ export async function addHistory(uid: string, message: string, aiResponse: strin
   const col = collection(db, 'users', uid, 'history');
   await addDoc(col, { message, aiResponse, ts: serverTimestamp() });
 }
+
+export async function getDailyAIUsage(uid: string): Promise<{ date: string; count: number }> {
+  const ref = doc(db, 'users', uid);
+  const snap = await getDoc(ref);
+  const data = (snap.data() as any) || {};
+  const today = new Date().toISOString().slice(0, 10);
+  if (data.daily?.date === today) return { date: today, count: data.daily.count || 0 };
+  return { date: today, count: 0 };
+}
+
+export async function incrementDailyAIUsage(uid: string): Promise<number> {
+  const { date, count } = await getDailyAIUsage(uid);
+  const today = new Date().toISOString().slice(0, 10);
+  const next = date === today ? count + 1 : 1;
+  await setDoc(doc(db, 'users', uid), { daily: { date: today, count: next } }, { merge: true });
+  return next;
+}

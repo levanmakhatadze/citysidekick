@@ -18,6 +18,14 @@ export default function AdviceSheet({ center, advice }: Props) {
   const [loading, setLoading] = useState(false);
   const nav = useNavigation<any>();
 
+  const share = async () => {
+    try {
+      const content = text || 'Exploring with CitySidekick.';
+      const { Share } = await import('react-native');
+      await Share.share({ message: content });
+    } catch {}
+  };
+
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
@@ -27,7 +35,7 @@ export default function AdviceSheet({ center, advice }: Props) {
         setLoading(true);
         const w = await getCurrentWeather(center[1], center[0]);
         const prefs = await loadPrefs();
-        const prompt = `User is at lon=${center[0].toFixed(3)}, lat=${center[1].toFixed(3)}. Weather: ${w.tempC}°C, ${w.description}. 
+        const prompt = `User is at lon=${center[0].toFixed(3)}, lat=${center[1].toFixed(3)}. Weather: ${w.tempC}°C, ${w.description}.
 Suggest one nearby relaxing destination and an outfit. Add a short eco-insight encouraging a low-carbon option.`;
         const resp = await askEchoGuide(prompt, { tone: prefs.tone });
         if (!cancelled) setText(resp);
@@ -64,6 +72,9 @@ Suggest one nearby relaxing destination and an outfit. Add a short eco-insight e
             }}
           >
             <Text style={styles.btnText}>Open in Chat</Text>
+          </TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" style={styles.btn} onPress={share}>
+            <Text style={styles.btnText}>Share Plan</Text>
           </TouchableOpacity>
         </View>
       </BottomSheetScrollView>
