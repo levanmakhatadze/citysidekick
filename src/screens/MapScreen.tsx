@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TextInput, FlatList, TouchableOpacity, Text } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import * as Location from 'expo-location';
 import AdviceSheet from '../components/AdviceSheet';
+import { fetchOverpassPOIs } from '../services/pois';
 
 MapboxGL.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || '');
 
@@ -13,6 +14,8 @@ export default function MapScreen() {
   const [q, setQ] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [theme, setTheme] = useState<'tranquil' | 'urban'>('tranquil');
+  const [poiFC, setPoiFC] = useState<any>({ type: 'FeatureCollection', features: [] });
+  const lastFetchKey = useRef<string>('');
 
   useEffect(() => {
     (async () => {
@@ -22,6 +25,20 @@ export default function MapScreen() {
       setCenter([pos.coords.longitude, pos.coords.latitude]);
     })();
   }, []);
+
+  useEffect(() => {
+    const t = setTimeout(async () => {
+      if (!center || (center[0] === 0 && center[1] === 0)) return;
+      const key = `${center[0].toFixed(3)},${center[1].toFixed(3)}`;
+      if (lastFetchKey.current === key) return;
+      lastFetchKey.current = key;
+      try {
+        const fc = await fetchOverpassPOIs(center[1], center[0], 1500);
+        setPoiFC(fc);
+      } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [center]);
 
   useEffect(() => {
     const run = setTimeout(async () => {
@@ -36,6 +53,7 @@ export default function MapScreen() {
           )}&format=json&addressdetails=1&limit=5`
         );
         const data = (await res.json()) as Suggestion[];
+
         setSuggestions(data);
       } catch {}
     }, 300);
@@ -52,7 +70,33 @@ export default function MapScreen() {
     <View style={styles.container}>
       <MapboxGL.MapView style={StyleSheet.absoluteFill} styleURL={theme === 'urban' ? MapboxGL.StyleURL.Street : MapboxGL.StyleURL.Outdoors}>
         <MapboxGL.Camera zoomLevel={12} centerCoordinate={center} />
+
+        <MapboxGL.ShapeSource id="pois" shape={poiFC}>
+          <MapboxGL.CircleLayer
+            id="poi-circles"
+            style={{
+              circleColor: theme === 'urban' ? '#9efcff' : '#8cffc1',
+              circleOpacity: 0.7,
+              circleRadius: 5,
+              circleStrokeColor: theme === 'urban' ? '#00e0ff' : '#46e6a0',
+              circleStrokeWidth: 1.5,
+            }}
+          />
+        </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
+
+      <View style={{ position: 'absolute', top: 10, right: 16, flexDirection: 'row', gap: 8 }}>
+        <TouchableOpacity onPress={() => setTheme('tranquil')} style={{ backgroundColor: theme==='tranquil'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+          <Text style={{ color: theme==='tranquil'?'#00112b':'#cfe3ff' }}>Tranquil</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setTheme('urban')} style={{ backgroundColor: theme==='urban'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+          <Text style={{ color: theme==='urban'?'#00112b':'#cfe3ff' }}>Urban</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ position: 'absolute', top: 10, left: 16, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, backgroundColor: 'rgba(12,16,32,0.8)', borderWidth: 1, borderColor: 'rgba(90,161,255,0.25)' }}>
+        <Text style={{ color: '#cfe3ff' }}>{center[1].toFixed(3)}, {center[0].toFixed(3)}</Text>
+      </View>
 <View style={{ position: 'absolute', top: 10, right: 16, flexDirection: 'row', gap: 8 }}>
   <TouchableOpacity onPress={() => setTheme('tranquil')} style={{ backgroundColor: theme==='tranquil'?'#5aa1ff':'#1a2449', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
     <Text style={{ color: theme==='tranquil'?'#00112b':'#cfe3ff' }}>Tranquil</Text>

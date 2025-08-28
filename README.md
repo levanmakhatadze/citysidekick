@@ -10,6 +10,10 @@ Location-based discovery with AI companion.
 ## Setup
 - cp .env.example .env
 - Fill in EXPO_PUBLIC_* keys
+  - EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN=...
+  - EXPO_PUBLIC_OPENWEATHER_API_KEY=...
+  - EXPO_PUBLIC_OPENAI_API_KEY=... (or Grok token)
+  - Firebase web config keys
 - npm install
 - npm run start
 
